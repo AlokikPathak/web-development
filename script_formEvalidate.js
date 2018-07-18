@@ -14,18 +14,36 @@ var rowUpdateNo =0;
 var update=false; 
 var counter=1;
 
+
+/**
+ * Assigning ids of form Elements to variable which are accessed many time of Code optimization
+ */
+
+var idFirstName = $("#fname");
+var idLastName = $("#lname");
+var idEmail = $("#email");
+var idMobile = $("#mobile");
+var idAddress = $("#address");
+var idDepartment = $("#department");
+var idHeading = $("#Heading");
+var idSubmit = $("#subUpd");
+var idTable = $("#empTab");
+
+var idFnameError = $("#fname_error_message");
+var idLnameError = $("#lname_error_message");
+var idMobileError = $("#mobile_error_message");
+var idAddressError = $("#address_error_message");
+var idEmailError = $("#email_error_message");
+
+
 /**
  * Alternate of $(document).ready(function(){});
  * Executed after all DOM elements are loaded and Document is ready
  */
 $(function(){
 
-	$("#fname_error_message").hide();
-	$("#lname_error_message").hide();
-	$("#mobile_error_message").hide();
-	$("#address_error_message").hide();
-	$("#email_error_message").hide();
-		
+	hideErrorMessage();
+	
 	$("input[type=text]").focus(function(){
 		$(this).css("background-color","#ffffcc");
 	});
@@ -61,7 +79,6 @@ $(function(){
 	});
 	
 	
-	
 	/**
 	* check_fname() is method which validates the First name entered by the user.
 	* It is invoked by keyup() event when user is entering the details.
@@ -74,15 +91,15 @@ $(function(){
 		var pattern = /^[a-zA-Z]*$/;
 		var fname = $("#fname").val();
 		if (pattern.test(fname) && fname !== '') {
-			$("#fname_error_message").hide();
+			idFnameError.hide();
 			error_fname = false; 
-			$("#fname").css("color","Dodgerblue");
+			idFirstName.css("color","Dodgerblue");
 		}
 		else {
-			$("#fname_error_message").html("Should contain only alphabets");
-			$("#fname_error_message").show();
+			idFnameError.html("Should contain only alphabets");
+			idFnameError.show();
 			error_fname = true; 
-			$("#fname").css("color","tomato");
+			idFirstName.css("color","tomato");
 
 		}
 	}
@@ -97,24 +114,24 @@ $(function(){
 	function check_lname() {
 		
 		var pattern = /^[a-zA-Z]*$/;
-		var fname = $("#lname").val();
+		var lname = $("#lname").val();
 		
-		if(fname == ""){
-			$("#lname_error_message").hide();
+		if(lname == ""){
+			idLnameError.hide();
 			error_lname = false; 
-			$("#lname").css("color","Dodgerblue");
+			idLastName.css("color","Dodgerblue");
 		}
-		else if (pattern.test(fname)) {
-			$("#lname_error_message").hide();
+		else if (pattern.test(lname)) {
+			idLnameError.hide();
 			error_lname = false; 
-			$("#lname").css("color","Dodgerblue");
+			idLastName.css("color","Dodgerblue");
 			
 		}
 		else {
-			$("#lname_error_message").html("Should contain only alphabets");
-			$("#lname_error_message").show();
+			idLnameError.html("Should contain only alphabets");
+			idLnameError.show();
 			error_lname = true; 
-			$("#lname").css("color","tomato");
+			idLastName.css("color","tomato");
 
 		}
 	}
@@ -138,30 +155,30 @@ $(function(){
 			var emailDuplicate = checkDuplicateEmail(email);
 			
 			if(emailDuplicate == false ){
-				$("#email_error_message").hide();
+				idEmailError.hide();
 				error_email = false;
-				$("#email").css("color","Dodgerblue");
+				idEmail.css("color","Dodgerblue");
 			}
 			else{
 				
-				$("#email_error_message").html("Email already exist! Try something else");
-				$("#email_error_message").show();
+				idEmailError.html("Email already exist! Try something else");
+				idEmailError.show();
 				error_email = true;
-				$("#email").css("color","tomato");
+				idEmail.css("color","tomato");
 				
 			}
 		}
 		else {	
-			$("#email_error_message").html("Invalid Email (ex. xyz@gmail.com)");
-			$("#email_error_message").show();
+			idEmailError.html("Invalid Email (ex. xyz@gmail.com)");
+			idEmailError.show();
 			error_email = true;
-			$("#email").css("color","tomato");
+			idEmail.css("color","tomato");
 		}
 	}
 	
 
 	
-	/**
+   /** 
 	* check_mobile() is method which validates the mobile no. entered by the user.
 	* It is invoked by keyup() event when user is entering the details.
 	* It checks first wheather the entered mobile no. is valid.
@@ -178,59 +195,79 @@ $(function(){
 			var mobileDuplicate = checkDuplicateMobile(mob);
 			
 			if(mobileDuplicate == false ){
-				$("#mobile_error_message").hide();
+				idMobileError.hide();
 				error_mobile = false;
-				$("#mobile").css("color","Dodgerblue");
+				idMobile.css("color","Dodgerblue");
 			}
 			else{
 				
-				$("#mobile_error_message").html("Mob. No. already exist! Try something else");
-				$("#mobile_error_message").show();
+				idMobileError.html("Mob. No. already exist! Try something else");
+				idMobileError.show();
 				mobile_email = true;
-				$("#mobile").css("color","tomato");
+				idMobile.css("color","tomato");
 				
 			}
 		}
 		else{
-			$("#mobile_error_message").html("Mobile must contain 10 digit numeric value");
-			$("#mobile_error_message").show();
+			idMobileError.html("Mobile must contain 10 digit numeric value");
+			idMobileError.show();
 			error_mobile = true;
-			$("#mobile").css("color","tomato");
+			idMobile.css("color","tomato");
 		}
 	}
+	
+	
+	/**
+	 * AJAX Request to acces a JSON File
+	 * XMLHttpRequest obj. can be used to exchange the data at the background of Web without reloading the whole page
+	 */
+	
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var myObj = JSON.parse(this.responseText);
+		for(var i=0; i< myObj.length; i++){
+			addToTable(myObj[i].fname, myObj[i].lname, myObj[i].email, myObj[i].mobile, myObj[i].address, myObj[i].department);	
+		}
+      }
+	};
+	xmlhttp.open("GET", "empData.json", true);
+	xmlhttp.send();
+	
+	
 	
 });
 
 
 
 /** 
-* It invoked by updateRow() method.
-* Seven arguments are passed which are fname, lname, email, mobile, address & department while invocation.
-* It fills out the text input fields such First Name, Last Name, Email, Mobile etc. of the respective row.
-* It returns nothing specifically.
-*/
-function autoFill( rowNo, fName, lName, Email, Mobile, Address, Dept ) {
+ * It invoked by updateRow() method.
+ * Seven arguments are passed which are fname, lname, email, mobile, address & department while invocation.
+ * It fills out the text input fields such First Name, Last Name, Email, Mobile etc. of the respective row.
+ * It returns nothing specifically.
+ */
+function autoFill( rowNo, fName, lName, Email, Mobile, Address, Department ) {
 	event.preventDefault();
 	
-    document.getElementById('fname').value = fName;
-    document.getElementById('lname').value = lName;
-	document.getElementById('email').value = Email;
-	document.getElementById('mobile').value = Mobile;
-	document.getElementById('address').value = Address;
-	document.getElementById('department').value = Dept;
-	
-   
+	idFirstName.val(fName);
+	idLastName.val(lName);
+	idEmail.val(Email);
+	idMobile.val(Mobile);
+	idAddress.val(Address);
+	var table = document.getElementById("empTab").rows;
+	var y = table[rowNo].cells; 
+	idDepartment.val(y[6].innerHTML);
 }
 
 
 /**
-* It updates the table after user make changes in existing details entered earlier.
-* It is invoked by "submit/update" button is clicked.
-* Seven arguments are passed to it which needs to be updated on the table in specific row which is 1st coloumn.
-* It internally invoke the resetDet() method after updating the table and clears the input fields.
-*/
+ * It updates the table after user make changes in existing details entered earlier.
+ * It is invoked by "submit/update" button is clicked.
+ * Seven arguments are passed to it which needs to be updated on the table in specific row which is 1st coloumn.
+ * It internally invoke the resetDet() method after updating the table and clears the input fields.
+ */
 function updateTable(r, fName, lName, Email, Mobile, Address, Dept){
-	
+	resetDet();
 	event.preventDefault();
 
 	var x = document.getElementById("empTab").rows[r].cells;
@@ -243,46 +280,41 @@ function updateTable(r, fName, lName, Email, Mobile, Address, Dept){
 	x[6].innerHTML = Dept;
 	
 	alert("Table updated...!");
-	document.getElementById("Heading").innerHTML = "Registration Form";
-	resetDet();
 	
 }
 
 
 /**
-* UpdateRow() method is invoked when user clicks on the Update button assign to each row.
-* It sets the update flag as true & assign the global var of row i.e., rowUpdateNo to respective value.
-* It then invoke autofill() method which fills out the Form.
-* It then sets the error_fname, error_lname, error_email, error_mobile, error_address flag as false.
-*/
+ * UpdateRow() method is invoked when user clicks on the Update button assign to each row.
+ * It sets the update flag as true & assign the global var of row i.e., rowUpdateNo to respective value.
+ * It then invoke autofill() method which fills out the Form.
+ * It then sets the error_fname, error_lname, error_email, error_mobile, error_address flag as false.
+ */
 function updateRow( indexThis, fName, lName, Email, Mobile, Address, Dept){
 	
-	update =true;	
-	
-	
-	
+	update = true;	
 	var rowNo = indexThis.parentNode.parentNode.rowIndex ;
 	
 	rowUpdateNo = rowNo;	
 	autoFill(rowNo, fName, lName, Email, Mobile, Address, Dept);
 	
-	document.getElementById("Heading").innerHTML = "Update Employee Details";
-	$("#Heading").html("Update Employee Details");
-	
 	error_fname = error_email = error_mobile= false;
 	error_lname = error_address = false;
 	
-	$("#subUpd").val("UPDATE");
-	$("#subUpd").css("background-color","Dodgerblue");
+	idHeading.html("Update Employee Details");
+	idSubmit.val("UPDATE");
+	idSubmit.css("background-color","Dodgerblue");
+
+	
 }
 
 
 /**
-* checkDuplicateEmail() method is invoked by check_email() method.
-* It checks wheather the entered email by user already exist or duplicate or not.
-* It first check out the update flag if yes it ignores that row.
-* It returns "true" if it finds duplicate email else it returns "false".
-*/
+ * checkDuplicateEmail() method is invoked by check_email() method.
+ * It checks wheather the entered email by user already exist or duplicate or not.
+ * It first check out the update flag if yes it ignores that row.
+ * It returns "true" if it finds duplicate email else it returns "false".
+ */
 
 function checkDuplicateEmail( emailInput){
 	if(update == false){
@@ -312,11 +344,11 @@ function checkDuplicateEmail( emailInput){
 
 
 /**
-* checkDuplicateMobile() method is invoked by check_mobile() method.
-* It checks wheather the entered mobile by user already exist or duplicate or not.
-* It first check out the update flag if yes it ignores that row.
-* It returns "true" if it finds duplicate mobile else it returns "false".
-*/
+ * checkDuplicateMobile() method is invoked by check_mobile() method.
+ * It checks wheather the entered mobile by user already exist or duplicate or not.
+ * It first check out the update flag if yes it ignores that row.
+ * It returns "true" if it finds duplicate mobile else it returns "false".
+ */
 function checkDuplicateMobile( mobileInput ){
 	
 	if(update == false ){
@@ -343,9 +375,9 @@ function checkDuplicateMobile( mobileInput ){
 
 
 /**
-* This method is invoked by deleteRow() method.
-* It updates the Sl.Nos. of each row present after the deleted row.
-*/
+ * This method is invoked by deleteRow() method.
+ * It updates the Sl.Nos. of each row present after the deleted row.
+ */
 function updateAfterdel(rowNo){
 	
 	
@@ -424,9 +456,7 @@ function addToTable(fName, lName, Email, Mobile, Address, Dept){
 	
 	alert("All details are validated and  inserted inside the table.!");
 	
-	counter++;	
-
-		 
+	counter++;			 
 }
 
 /**
@@ -434,12 +464,12 @@ function addToTable(fName, lName, Email, Mobile, Address, Dept){
  * Hides all the error messages if they are in form.
  */
 function hideErrorMessage(){
-		
-		$("#fname_error_message").hide();
-		$("#lname_error_message").hide();
-		$("#mobile_error_message").hide();
-		$("#address_error_message").hide();
-		$("#email_error_message").hide();
+	
+		idFnameError.hide();
+		idLnameError.hide();
+		idEmailError.hide();
+		idMobileError.hide();
+		idAddressError.hide();
 }
 
 
@@ -468,25 +498,22 @@ function validateFormJQuery(){
 function resetDet(){
 	
 	update = false;
-	document.getElementById("Heading").innerHTML="Registration Form";
 	
-    document.getElementById('fname').value = "";
-    document.getElementById('lname').value = "";
-	document.getElementById('email').value = "";
-	document.getElementById('mobile').value = "";
-	document.getElementById('address').value = "";
-	document.getElementById("department").value = "Software Engineer";
+	idFirstName.val("");
+	idLastName.val("");
+	idEmail.val("");
+	idMobile.val("");
+	idAddress.val("");
+	idDepartment.val("Software Engineer");
 	
 	error_fname = error_email = error_mobile = true;
 	erro_address = error_lname = false;
 	
 	hideErrorMessage();
 	
-	$("#subUpd").val("SUBMIT");
-	$("#subUpd").css("background-color","#4CAF50");
-
-	
-	
+	idSubmit.val("SUBMIT");
+	idSubmit.css("background-color","#4CAF50");	
+	idHeading.html("Registration Form");
 }
 
 /**
@@ -498,27 +525,21 @@ function resetDet(){
  */
 function myFunction() {
 
-	
-		var fName= document.getElementById("fname").value;
-		var lName= document.getElementById("lname").value;
-		var Email= document.getElementById("email").value;
-		var Mobile = document.getElementById("mobile").value;
-		
-		var Address = document.getElementById("address").value;
-		var Dept = document.getElementById("department").value;
-	
+		var fName = idFirstName.val();
+		var lName= idLastName.val();
+		var Email= idEmail.val();
+		var Mobile = idMobile.val();
+		var Address = idAddress.val();
+		var Dept = idDepartment.val();
 	
 		var statusFinal = validateFormJQuery();
 	
 		if( statusFinal == true ){
-		
 			if(update == true){
 				update=false;
 				updateTable(rowUpdateNo, fName, lName, Email, Mobile, Address, Dept);
-		
 			}
 			else{
-			
 				addToTable(fName, lName, Email, Mobile, Address, Dept);
 				resetDet();
 			}
@@ -526,7 +547,6 @@ function myFunction() {
 		else{
 			alert("Please fill the form correctly..!")
 		}
-	
-
+		
 }
 
