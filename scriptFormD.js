@@ -221,20 +221,20 @@ $(function(){
 	 * AJAX Request to acces a JSON File
 	 * XMLHttpRequest obj. can be used to exchange the data at the background of Web without reloading the whole page
 	 */
-	
+	 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-        var myObj = JSON.parse(this.responseText);
-		for(var i=0; i< myObj.length; i++){
-			addToTable(myObj[i].fname, myObj[i].lname, myObj[i].email, myObj[i].mobile, myObj[i].address, myObj[i].department);	
+        var myObjArray = JSON.parse(this.responseText);
+		for(var i=0; i< myObjArray.length; i++){
+			addToTable(myObjArray[i].fname, myObjArray[i].lname, myObjArray[i].email, myObjArray[i].mobile, myObjArray[i].address, myObjArray[i].department);	
 		}
       }
 	};
-	xmlhttp.open("GET", "empData.json", true);
+	xmlhttp.open("GET", "employeeData.json", true);
 	xmlhttp.send();
 	
-	
+
 	
 });
 
@@ -456,6 +456,9 @@ function addToTable(fName, lName, Email, Mobile, Address, Dept){
 	
 	alert("All details are validated and  inserted inside the table.!");
 	
+	/** Invoke the Function to store the details in MySQL database **/
+	runPHPScript(fName, lName, Email, Mobile, Address, Dept);
+	
 	counter++;			 
 }
 
@@ -516,6 +519,22 @@ function resetDet(){
 	idHeading.html("Registration Form");
 }
 
+function runPHPScript(fName, lName, Email, Mobile, Address, Dept){
+		
+		var formDataObj= {'fname':fName, 'lname':lName, 'email':Email, 'mobile':Mobile,'address':Address,'department':Dept};
+		var formDataJSON = JSON.stringify(formDataObj);
+		
+		$.ajax({
+	
+			type: "POST",
+			url: "demo.php",
+			data: 'data='+formDataJSON,
+			success: function(data){
+				alert("Server Response: "+data);
+			}
+		});
+}
+
 /**
  * It is invoked when the submit/update button is clicked.
  * It fetches values of all input fields and assign them to their respective variables.
@@ -542,6 +561,7 @@ function myFunction() {
 			else{
 				addToTable(fName, lName, Email, Mobile, Address, Dept);
 				resetDet();
+				
 			}
 		}
 		else{
