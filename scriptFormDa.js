@@ -11,9 +11,10 @@ var error_email = true;
 var error_mobile = true;
 var error_address = false;
 var rowUpdateNo =0;
-var update=false; 
+var update=false;
+var deleteFlag=false; //True when user wants to delete the row;
 var counter=1;
-
+var key=""; //Stores the key=email in the begining using which it will perform Update and delete Operation
 
 /**
  * Assigning ids of form Elements to variable which are accessed many time of Code optimization
@@ -217,25 +218,6 @@ $(function(){
 	}
 	
 	
-	/**
-	 * AJAX Request to acces a JSON File
-	 * XMLHttpRequest obj. can be used to exchange the data at the background of Web without reloading the whole page
-	 */
-	 
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        var myObjArray = JSON.parse(this.responseText);
-		for(var i=0; i< myObjArray.length; i++){
-			addToTable(myObjArray[i].fname, myObjArray[i].lname, myObjArray[i].email, myObjArray[i].mobile, myObjArray[i].address, myObjArray[i].department);	
-		}
-      }
-	};
-	xmlhttp.open("GET", "employeeData.json", true);
-	xmlhttp.send();
-	
-
-	
 });
 
 
@@ -265,6 +247,8 @@ function autoFill( rowNo, fName, lName, Email, Mobile, Address, Department ) {
  * It is invoked by "submit/update" button is clicked.
  * Seven arguments are passed to it which needs to be updated on the table in specific row which is 1st coloumn.
  * It internally invoke the resetDet() method after updating the table and clears the input fields.
+ * Runs the phpScriptFunction to update the Database
+ * Invode runPHPScript() with operationCode=2 method to update the database accordingly.
  */
 function updateTable(r, fName, lName, Email, Mobile, Address, Dept){
 	resetDet();
@@ -281,6 +265,8 @@ function updateTable(r, fName, lName, Email, Mobile, Address, Dept){
 	
 	alert("Table updated...!");
 	
+	runPHPScript(2, fName, lName, Email, Mobile, Address, Dept);
+	
 }
 
 
@@ -290,13 +276,15 @@ function updateTable(r, fName, lName, Email, Mobile, Address, Dept){
  * It then invoke autofill() method which fills out the Form.
  * It then sets the error_fname, error_lname, error_email, error_mobile, error_address flag as false.
  */
-function updateRow( indexThis, fName, lName, Email, Mobile, Address, Dept){
+//function updateRow( indexThis, fName, lName, Email, Mobile, Address, Dept){
+function updateRow(indexThis){	
 	
 	update = true;	
 	var rowNo = indexThis.parentNode.parentNode.rowIndex ;
 	
-	rowUpdateNo = rowNo;	
-	autoFill(rowNo, fName, lName, Email, Mobile, Address, Dept);
+	rowUpdateNo = rowNo;
+	var x = document.getElementById("empTab").rows[rowNo].cells;
+	autoFill(rowNo, x[1].innerHTML, x[2].innerHTML, x[3].innerHTML, x[4].innerHTML, x[5].innerHTML, x[6].innerHTML );
 	
 	error_fname = error_email = error_mobile= false;
 	error_lname = error_address = false;
@@ -304,6 +292,9 @@ function updateRow( indexThis, fName, lName, Email, Mobile, Address, Dept){
 	idHeading.html("Update Employee Details");
 	idSubmit.val("UPDATE");
 	idSubmit.css("background-color","Dodgerblue");
+	
+	//Setting the key value
+	key=x[3].innerHTML;
 
 	
 }
@@ -393,6 +384,8 @@ function updateAfterdel(rowNo){
  * It invoke resetDet() method.
  * Deletes the specific row of the clicked delete button.
  * It decrements the counter value and invokes the updateAfterdel() method.
+ * Set the unique key value as Email of selected row.
+ * Invoke runPHPScript() with operationCode=3 to delete from the Database accordingly.
  */
 function deleteRow(index){
 		event.preventDefault();
@@ -401,12 +394,18 @@ function deleteRow(index){
 		var rowNum = index.parentNode.parentNode.rowIndex ;
 		alert("Do you want to delete row: "+ rowNum);
 		
+		var x = document.getElementById("empTab").rows[rowNum].cells;
+		key=x[3].innerHTML;
+		
 		document.getElementById("empTab").deleteRow( rowNum );
 		counter--;
 		
 		updateAfterdel( rowNum);
-		
 		alert("Row: "+ rowNum +" deleted..!");
+		
+		runPHPScript(3,'','','','','','');
+		
+		
 }
 
 
@@ -438,7 +437,8 @@ function addToTable(fName, lName, Email, Mobile, Address, Dept){
 	btnUpdate.setAttribute("class","newButtonUpdate");
 	btnUpdate.onclick= function(){
 		event.preventDefault();
-		updateRow( this , fName, lName, Email, Mobile, Address, Dept);
+		//updateRow( this , fName, lName, Email, Mobile, Address, Dept);
+		updateRow(this);
 	}
 	row.insertCell(7).appendChild(btnUpdate);
 	
@@ -457,7 +457,7 @@ function addToTable(fName, lName, Email, Mobile, Address, Dept){
 	alert("All details are validated and  inserted inside the table.!");
 	
 	/** Invoke the Function to store the details in MySQL database **/
-	runPHPScript(fName, lName, Email, Mobile, Address, Dept);
+	runPHPScript(1, fName, lName, Email, Mobile, Address, Dept);
 	
 	counter++;			 
 }
@@ -519,13 +519,22 @@ function resetDet(){
 	idHeading.html("Registration Form");
 }
 
-function runPHPScript(fName, lName, Email, Mobile, Address, Dept){
+/**
+ * Pass operation code value through function which is calling it
+ * When update is clicked store it email/mobile no. at the beginning
+ * A another variable to store the email of the User 
+ * That email will act as primary key for update and delete operation
+ * operationCode 3->Delete, 2->Update, 1->Inserts
+*/
+
+function runPHPScript(operationCode, fName, lName, Email, Mobile, Address, Dept){
 		
-		var formDataObj= {'fname':fName, 'lname':lName, 'email':Email, 'mobile':Mobile,'address':Address,'department':Dept};
+		var formDataObj= {'operation':operationCode, 'keyValue':key, 'fname':fName, 'lname':lName, 'email':Email, 'mobile':Mobile,'address':Address,'department':Dept};
+		
 		var formDataJSON = JSON.stringify(formDataObj);
 		
 		$.ajax({
-	
+			
 			type: "POST",
 			url: "demo.php",
 			data: 'data='+formDataJSON,
@@ -557,6 +566,7 @@ function myFunction() {
 			if(update == true){
 				update=false;
 				updateTable(rowUpdateNo, fName, lName, Email, Mobile, Address, Dept);
+				resetDet();
 			}
 			else{
 				addToTable(fName, lName, Email, Mobile, Address, Dept);
