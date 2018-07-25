@@ -1,6 +1,6 @@
 <?php
 	
-	/**Declare and initialize variables used in the program **/
+	/** Declare and initialize variables used in the program **/
 	$fnameErr = $lnameErr = $emailErr = $mobileErr = $addressErr 
 	=$departmentErr = $passwordErr="";
 	$dataFName = $dataLName = $dataEmail = $dataMobile = $dataAddress 
@@ -19,7 +19,7 @@
 	$dataDepartment = $formDataJsonArray['department'];
 	$dataPassword = $formDataJsonArray['password'];
 	
-	/**Initialize Server response JSON object **/
+	/** Initialize Server response JSON object **/
 	$myObj = new StdClass;
 	$myObj->operation = "";
 	$myObj->code = "";
