@@ -1,9 +1,17 @@
 <?php
+	/**
+	 * Filename  - authRegistrationFormD.php
+	 * File path - C:\xampp\htdocs\Project\Repository\
+	 * Description : Validates, authenticate and store registration credentials
+	 * @author  : Alokik Pathak
+	 * Created date : 20/07/2018
+	 */
+	
 	
 	/** Declare and initialize variables used in the program **/
-	$fnameErr = $lnameErr = $emailErr = $mobileErr = $addressErr 
-	=$departmentErr = $passwordErr="";
-	$dataFName = $dataLName = $dataEmail = $dataMobile = $dataAddress 
+	$firstNameError = $lastNameError = $emailError = $mobileError = $addressError 
+	=$departmentError = $passwordError="";
+	$dataFirstName = $dataLastName = $dataEmail = $dataMobile = $dataAddress 
 	=$dataDepartment = $dataPassword = "";
 	
 	/** Parsing client data and storing it different variables **/
@@ -11,13 +19,14 @@
 	
 	$operationCode = $formDataJsonArray['operation'];
 	$key = $formDataJsonArray['keyValue'];
-	$dataFName = $formDataJsonArray['fname'];
-	$dataLName = $formDataJsonArray['lname'];
+	$dataFirstName = $formDataJsonArray['firstName'];
+	$dataLastName = $formDataJsonArray['lastName'];
 	$dataEmail = $formDataJsonArray['email'];
 	$dataMobile = $formDataJsonArray['mobile'];
 	$dataAddress = $formDataJsonArray['address'];
 	$dataDepartment = $formDataJsonArray['department'];
 	$dataPassword = $formDataJsonArray['password'];
+	
 	
 	/** Initialize Server response JSON object **/
 	$myObj = new StdClass;
@@ -26,64 +35,86 @@
 	$myObj->status = "";
 	$myObj->error = "";
 	$myObj->id = "";
-	$myObj->fname = "";
-	$myObj->lname = "";
+	$myObj->firstName = "";
+	$myObj->lastName = "";
 	$myObj->email = "";
 	$myObj->mobile = "";
 	$myObj->address = "";
 	$myObj->department = "";
 	$myObj->password = '';
 	
+	include_once('constantVariables.php');
 	/** Establish connection with Server and checking it **/
-	$con = mysqli_connect('127.0.0.1', 'root','');
+	$db = include('config.php');
+	$con = mysqli_connect($db['host'], $db['user'],$db['password']);
 	if(!$con){
-		echo'Not connected to Server';
+		//echo'Not connected to Server';
+		echo SERVER_ERROR;
 	}
-	if(!mysqli_select_db($con, 'employee')){
-		echo'Not conneted to database';
+	if(!mysqli_select_db($con, $db['database'])){
+		//echo'Not conneted to database';
+		echo DB_ERROR;
 	}
 	
-	/**
-	 * checkDepartment() method is invoked for cheking department data
-	 * If $Department is 'Software Engineer' or 'Software Test Engineer'
-	   or 'UX/UI Engineer' it returns false else it returns true;
-	 * It set the $departmentErr message according to validation output.
-	 */
+   /**
+	* Sanitize all user's credentials.
+	*  
+	* @return boolean if valid returns false else true
+	*/
+	function sanitizeCredentials(){
+		global $dataFirstName, $dataLastName, $dataEmail, $dataMobile,
+		$dataPassword, $dataAddress, $dataDepartment;
+		
+		$dataFirstName = filter_var($dataFirstName, FILTER_SANITIZE_STRING);
+		$dataLastName = filter_var($dataLastName, FILTER_SANITIZE_STRING);
+		$dataEmail = filter_var($dataEmail, FILTER_SANITIZE_EMAIL);
+		$dataMobile = filter_var($dataMobile, FILTER_SANITIZE_STRING);
+		$dataAddress = filter_var($dataAddress, FILTER_SANITIZE_STRING);
+		$dataDepartment = filter_var($dataDepartment, FILTER_SANITIZE_STRING);
+		$dataPassword = filter_var($dataPassword, FILTER_SANITIZE_STRING);
+	}
+	
+   /**
+	* Validates department data.
+	*  
+	* @return boolean if valid returns false else true
+	*/
 	function checkDepartment(){
 		
-		global $dataDepartment, $departmentErr;
+		global $dataDepartment, $departmentError;
 		
-		$x = strcmp('Software Engineer', $dataDepartment);
-		$y = strcmp('Software Test Engineer', $dataDepartment);
-		$z = strcmp('UX/UI Engineer', $dataDepartment);
+		$resultCompareA = strcmp(DEPARTMENT1, $dataDepartment);
+		$resultCompareB = strcmp(DEPARTMENT2, $dataDepartment);
+		$resultCompareC = strcmp(DEPARTMENT3, $dataDepartment);
 		
 		if( $dataDepartment === "" ){
-			$departmentErr = "Department must not be empty";	
-			return true;
-		}else if( $x==0 || $y==0 || $z==0 ){
-			return false;
-		}else{
-			$departmentErr = "Invalid department"; 
+			$departmentError = DEPARTMENT_ERROR1;
 			return true;
 		}
+		if( $resultCompareA == 0 || $resultCompareB == 0 || $resultCompareC == 0 ){
+			return false;
+		}
 		
+		$departmentError = DEPARTMENT_ERROR2; 
+		return true;
+		
+
 	}
 	
 	/**
-	 * checkFName() is method which validates the first name entered by the user.
-	 * set the $fnameErr message according to validation result.
-	 * returns "true" if the entered name is invalid.
-	 * returns "false" if entered name is valid.
+	 * Validates First Name data.
+   	 *  
+	 * @return boolean if valid returns false else true
 	 */
-	function checkFName()
+	function checkFirstName()
 	{
-		global $fnameErr, $dataFName;
+		global $firstNameError, $dataFirstName;
 		
-		if( $dataFName === ""){
-			$fnameErr="First name should not remain empty"; 
+		if( $dataFirstName === ""){
+			$firstNameError= FIRSTNAME_ERROR1; 
 			return true;
-		}elseif(!preg_match("/^[a-zA-Z ]*$/",$dataFName)){
-			$fnameErr="First should contain only alphabets"; 
+		}elseif(!preg_match("/^[a-zA-Z ]*$/",$dataFirstName)){
+			$firstNameError= FIRSTNAME_ERROR2; 
 			return true;
 		}
 		else{
@@ -92,18 +123,17 @@
 	}
 	
 	/**
-	 * checkLName() is method which validates the last name entered by the user.
-	 * set the $lnameErr message according to validation result.
-	 * returns "true" if the entered last name is invalid.
-	 * returns "false" if entered last name is valid.
+	 * Validates Last Name data.
+   	 *  
+	 * @return boolean if valid returns false else returns true.
 	 */
-	function checkLName(){
+	function checkLastName(){
 		
-		global $dataLName, $lnameErr;
+		global $dataLastName, $lastNameError;
 		
-		if( $dataLName !== "" ){
-			if(!preg_match("/^[a-zA-Z ]*$/",$dataLName)){
-				$lnameErr = "Last should contain only alphabets";
+		if( $dataLastName !== "" ){
+			if(!preg_match("/^[a-zA-Z ]*$/",$dataLastName)){
+				$lastNameError = LASTNAME_ERROR;
 				return true;
 			}
 		}
@@ -111,90 +141,86 @@
 	}
 	
 	/**
-	 * checkEmail() is method which validates the email entered by the user.
-	 * It checks first wheather the entered email is valid.
-	 * Set the $emailErr message variable according to validation result.
-	 * returns "true" if the entered email is invalid.
-	 * returns "false" if entered email is valid.
+	 * Validates Email data.
+   	 *  
+	 * @return boolean if valid returns false else returns true.
 	 */
 	function checkEmail()
 	{
 		if( $GLOBALS['dataEmail'] === "" ){
-			$GLOBALS['emailErr'] = "Email should be empty";
+			$GLOBALS['emailErr'] = EMAIL_ERROR1;
 			return true;
 		}else if( !preg_match("/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/", $GLOBALS['dataEmail'] )){
-			$GLOBALS['emailErr'] = "Email is not valid";
+			$GLOBALS['emailErr'] = EMAIL_ERROR2;
 			return true;
 		}
 		return false;
 	}
 	
-	/** 
-	 * checkMobile() is method which validates the mobile no. entered by the user.
-	 * It checks first wheather the entered mobile no. is valid.
-	 * It set the $mobileErr message according to validation result.
-	 * returns "true" if the entered mobile is invalid & not having any duplicate.
-	 * returns "false" if entered mobile is valid.
+	/**
+	 * Validates Mobile data.
+   	 *  
+	 * @return boolean if valid returns false else returns true.
 	 */
 	function checkMobile()
 	{
 		if( $GLOBALS['dataMobile'] === "" ){
-			$GLOBALS['mobileErr'] = "Mobile No. should not be empty"; 
+			$GLOBALS['mobileErr'] = MOBILE_ERROR1; 
 			return true;
 		}else if( !preg_match('/^(\+\d{1,3}[- ]?)?\d{10}$/',$GLOBALS['dataMobile'])){
-			$GLOBALS['mobileErr'] = "Mobile no. should contain 10 numeric chars";
+			$GLOBALS['mobileErr'] = MOBILE_ERROR2;
 			return true;
 		}
 		return false;
 	}
 	
 	/**
-	 * checkPassword() methods check wheather the password length is >= 8.
-	 * Set the $passwordErr message according to validation output.
-	 * Returns true if the password is invalid else returns false.
+	 * Validates Password data.
+   	 *  
+	 * @return boolean if valid returns false else returns true.
 	 */
 	function checkPassword()
 	{
 		if( $GLOBALS['dataPassword'] === "" ){
-			$GLOBALS['passwordErr'] = "Password must not be empty"; 
+			$GLOBALS['passwordErr'] = PASSWARD_ERROR1; 
 			return true;
 		}
 		else if(strlen($GLOBALS['dataPassword'])<8){
-			$GLOBALS['passwordErr'] ="Password length must be min. 8 chars"; 
+			$GLOBALS['passwordErr'] = PASSWARD_ERROR2;
 			return true;
 		}
 		return false;
 	}
 	
 	/**
-	 * validateCredentials() method invoke all the methods used for validation
-	 * Store the results of all validation methods
-	 * If all the results are false it returns false as validated & o/p correct
-	 * If output of any method invoked is true finally returns true.
+	 * Validates all user's data.
+   	 *  
+	 * @return boolean if valid returns false else returns true.
 	 */
 	function validateCredentials(){
 		
-		$statusFName = checkFName();
-		$statusLName = checkLName();
+		$statusFirstName = checkFirstName();
+		$statusLastName = checkLastName();
 		$statusEmail = checkEmail();
 		$statusMobile = checkMobile();
 		$statusDepartment = checkDepartment();
 		$statusPassword = checkPassword();
 		
-		if( $statusFName == true 
-		    || $statusLName == true
+		if( $statusFirstName == true 
+		    || $statusLastName == true
 			|| $statusEmail == true
 			|| $statusMobile == true
 			|| $statusDepartment == true 
 			|| $statusPassword == true
 		){
 			return true;
-		}else{
-			return false;
 		}
+		
+		return false;
 		
 	}
 	
+	sanitizeCredentials();
 	
 	/**
 	 * Different SQL operations are performed depending on $operationCode
@@ -212,7 +238,7 @@
 			$myObj->operation = "DELETE";
 			$myObj->code = 403;
 			$myObj->status = "FAILURE";
-			$myObj->error = "DELETE query not executed!";
+			$myObj->error = SQL_DELETE_ERROR1;
 			$responseServerJSON = json_encode($myObj);
 			echo $responseServerJSON;
 		}else{
@@ -233,8 +259,8 @@
 		
 		if( $statusValidation == false ){
 			
-			$sql = "update employeetable set firstname='$dataFName',
-			lastname='$dataLName', Email='$dataEmail', mobile='$dataMobile',
+			$sql = "update employeetable set firstname='$dataFirstName',
+			lastname='$dataLastName', Email='$dataEmail', mobile='$dataMobile',
 			address='$dataAddress', department='$dataDepartment', 
 			password='$dataPassword' where Email = '$key' ";
 			
@@ -242,7 +268,7 @@
 				$myObj->operation = "UPDATE";
 				$myObj->code = 403;
 				$myObj->status = "FAILURE";
-				$myObj->error = "Update query not executed!";
+				$myObj->error = SQL_UPDATE_ERROR1;
 			
 				$responseServerJSON = json_encode($myObj);
 				echo $responseServerJSON;
@@ -252,8 +278,8 @@
 				$myObj->status = "SUCCESS";
 				$myObj->error = "";
 			    $myObj->id = "";
-			    $myObj->fname = $GLOBALS['dataFName'];
-			    $myObj->lname = $GLOBALS['dataLName'];
+			    $myObj->firstName = $GLOBALS['dataFirstName'];
+			    $myObj->lastName = $GLOBALS['dataLastName'];
 			    $myObj->email = $GLOBALS['dataEmail'];
 			    $myObj->mobile = $GLOBALS['dataMobile'];
 			    $myObj->address = $GLOBALS['dataAddress'];
@@ -268,14 +294,14 @@
 			$myObj->operation = "UPDATE";
 			$myObj->code = 403;
 			$myObj->status = "FAILURE";
-			$myObj->error = "Invalid Credentials for Update!";
+			$myObj->error = SQL_UPDATE_ERROR2;
 			
 		    $responseServerJSON = json_encode($myObj);
 			echo $responseServerJSON;
 		}
 		
 	}else if($operationCode == 1){ 
-		global $myObj,$dataFName, $dataLName, $dataEmail, $dataMobile;
+		global $myObj,$dataFirstName, $dataLastName, $dataEmail, $dataMobile;
 		global $dataAddress, $dataDepartment;
 		$statusValidation = validateCredentials();
 		
@@ -285,7 +311,7 @@
 			$sql = "insert into employeetable 
 			(firstname, lastname, Email, mobile, address, department, password)
 			values 
-			('$dataFName', '$dataLName', '$dataEmail', '$dataMobile',
+			('$dataFirstName', '$dataLastName', '$dataEmail', '$dataMobile',
 			'$dataAddress', '$dataDepartment', '$dataPassword')";
 			
 			if(!mysqli_query($con, $sql)){
@@ -293,7 +319,7 @@
 				$myObj->operation = "INSERT";
 				$myObj->code = 403;
 				$myObj->status = "FAILURE";
-				$myObj->error = "Insert query not executed!";
+				$myObj->error = SQL_INSERT_ERROR1;
 			
 				$responseServerJSON = json_encode($myObj);
 				echo $responseServerJSON;
@@ -304,8 +330,8 @@
 				$myObj->status = "SUCCESS";
 				$myObj->error = "";
 			    $myObj->id = $id;
-			    $myObj->fname = $GLOBALS['dataFName'];
-			    $myObj->lname = $GLOBALS['dataLName'];
+			    $myObj->firstName = $GLOBALS['dataFirstName'];
+			    $myObj->lastName = $GLOBALS['dataLastName'];
 			    $myObj->email = $GLOBALS['dataEmail'];
 			    $myObj->mobile = $GLOBALS['dataMobile'];
 			    $myObj->address = $GLOBALS['dataAddress'];
@@ -320,7 +346,7 @@
 			$myObj->operation = "INSERT";
 			$myObj->code = 403;
 			$myObj->status = "FAILURE";
-			$myObj->error = "Invalid credentials for insert!";
+			$myObj->error = SQL_INSERT_ERROR2;
 			
 		    $responseServerJSON = json_encode($myObj);
 			echo $responseServerJSON;

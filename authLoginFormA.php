@@ -1,77 +1,92 @@
 <?php
+
+	/**
+	 * Filename  - authLoginFormA.php
+	 * File path - C:\xampp\htdocs\Project\Repository\
+	 * Description : Validates and authenticate login credentials
+	 * @author  : Alokik Pathak
+	 * Created date : 20/07/2018
+	 */
 	
-	$dataEmail = $dataPassword = $emailErr = $passwordErr="";
+	
+	$dataEmail = $dataPassword = $emailError = $passwordError="";
 	/** Decoding and storing client data **/
 	$formDataJsonArray= json_decode($_POST['data'],true);
 	
 	$dataEmail = $formDataJsonArray['Email'];
 	$dataPassword = $formDataJsonArray['Password'];
 	
-	/** Server side validation of Login Credentials **/
+	/**
+	 * Sanitize Email and Password data.
+	 */
+	function sanitizeData(){
+		global $dataEmail, $dataPassword;
+		$dataEmail = filter_var($dataEmail, FILTER_SANITIZE_EMAIL);
+		$dataPassword = filter_var($dataPassword, FILTER_SANITIZE_STRING);
+	}
 	
 	/**
-	 * checkEmail() is method which validates the email entered by the user.
-	 * It checks first wheather the entered email is valid.
-	 * Set the $emailErr message variable according to validation result.
-	 * returns "true" if the entered email is invalid.
-	 * returns "false" if entered email is valid.
+	 * Validates Email data.
+   	 *  
+	 * @return boolean if valid returns false else returns true.
 	 */
 	function checkEmail()
 	{
-		global $dataEmail, $emailErr;
+		global $dataEmail, $emailError;
 		if( $dataEmail === "" ){
-			$emailErr= "Email should be empty";
+			$emailError= "Email should be empty";
 			return true;
 		}else if( !preg_match("/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/", $dataEmail )){
-			$emailErr = "Email is not valid";
+			$emailError = "Email is not valid";
 			return true;
 		}
 		return false;
 	}
 	
 	/**
-	 * checkPassword() methods check wheather the password length is >= 8.
-	 * Set the $passwordErr message according to validation output.
-	 * Returns true if the password is invalid else returns false.
+	 * Validates Password data.
+   	 *  
+	 * @return boolean if valid returns false else returns true.
 	 */
 	function checkPassword()
 	{
-		global $dataPassword, $passwordErr;
+		global $dataPassword, $passwordError;
 		if( $dataPassword === "" ){
-			$passwordErr = "Password must not be empty"; 
+			$passwordError = "Password must not be empty"; 
 			return true;
 		}
 		else if(strlen($dataPassword)<8){
-			$passwordErr ="Password length must be min. 8 chars"; 
+			$passwordError ="Password length must be min. 8 chars"; 
 			return true;
 		}
 		return false;
 	}
 	
-	/** 
-	 * It validates the Client data login credentials
-	 * It invoke checkEmail() and checkPassword() methods
-	 * If the result of both method is false it returns false
-	   else returns true stating the data is invalid
+	/**
+	 * Validates all user's data.
+   	 *  
+	 * @return boolean if valid returns false else returns true.
 	 */
 	function validateClientData(){
 		$emailFlag = checkEmail();
 		$passwordFlag = checkPassword();
 		
-		if( $emailFlag == false && $passwordFlag == false ){
+		if( !$emailFlag && !$passwordFlag){
 			return false;
-		}else{
-			return true;
 		}
+		return true;
+		
 	}
 	
+	sanitizeData();
 	$statusValidation = validateClientData();
 	
 	/**If the client data is valid if block will be executed otherwise else **/
 	if( $statusValidation == false ){
 		
 		/** Establising connection with MYsqli database **/
-		$mysqli = new mysqli("127.0.0.1", "root", "", "employee");
+		$db = include('config.php');
+		$mysqli = new mysqli($db['host'], $db['user'], "", $db['database']);
 	
 		/** Preventing MYsqli injection **/
 		$stmt = $mysqli->prepare(" Select * from employeetable where Email = ? ");
@@ -99,8 +114,8 @@
 				$myObj = new StdClass;
 				$myObj->code = 200;
 				$myObj->result = "SUCCESS";
-				$myObj->fname = $row[1];
-				$myObj->lname = $row[2];
+				$myObj->firstName = $row[1];
+				$myObj->lastName = $row[2];
 				$myObj->email = $row[3];
 				$myObj->mobile = $row[4];
 				$myObj->address = $row[5];
@@ -122,7 +137,7 @@
 		$myObj = new StdClass;
 		$myObj->code = 404;
 		$myObj->result = "FAILURE";
-		$myObj->error =	"Client data is invalid-> ".$emailErr." ; ".$passwordErr;
+		$myObj->error =	"Client data is invalid-> ".$emailError." ; ".$passwordError;
 		$responseServerJSON = json_encode($myObj);
 		echo $responseServerJSON;	
 	}

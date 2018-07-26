@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+
+<!--
+/**
+ * Filename  - regFormD.php
+ * File path - C:\xampp\htdocs\Project\Repository\
+ * Description : It is a User Registration Form page.
+ * @author  : Alokik Pathak
+ * Created date : 13/07/2018
+ */
+-->
+
 <html lang="en">
 <head>
   <title>Bootstrap Example</title>
@@ -67,7 +78,7 @@
 		</div>
 		
 		<div class="form-group">
-			<label class="control-label col-sm-2">Password:<span style="color: red"> * </span></label>
+			<label class="control-label col-sm-2" id="labelPswrd">Password:<span style="color: red"> * </span></label>
 			<div class="col-sm-6">
 				<input type="password" class="form-control" id="password" placeholder="Enter password(8 chars)" name="password">
 			</div>
@@ -75,7 +86,7 @@
 		</div>
 		
 		<div class="form-group">
-			<label class="control-label col-sm-2">Confirm Password:<span style="color: red"> * </span></label>
+			<label class="control-label col-sm-2" id="labelCnfPswrd">Confirm Password:<span style="color: red"> * </span></label>
 			<div class="col-sm-6">
 				<input type="password" class="form-control" id="cnfpassword" placeholder="Same as password" name="cnfpassword">
 			</div>
@@ -85,7 +96,7 @@
 		<div class="form-group">        
 			<div class="col-sm-offset-2 col-sm-10 text-left">
 				<input type="button" class="btn btn-success" id="subUpd" onclick="myFunction()" value="SUBMIT">
-				<input type="button" class="btn btn-danger" ondblclick="resetDet()" value="RESET">
+				<input type="button" class="btn btn-danger" ondblclick="resetDetails()" value="RESET">
 			</div>	
 		</div>
 		
@@ -128,5 +139,7 @@
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
  <script src="scriptFormDa.js"></script>
+ <script src="md5.js"></script>
+ 
 
 </html>
