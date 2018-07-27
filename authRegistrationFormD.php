@@ -6,7 +6,7 @@
 	 * @author  : Alokik Pathak
 	 * Created date : 20/07/2018
 	 */
-	
+	arjun@gmail.com
 	
 	/** Declare and initialize variables used in the program **/
 	$firstNameError = $lastNameError = $emailError = $mobileError = $addressError 
@@ -182,11 +182,11 @@
 	function checkPassword()
 	{
 		if( $GLOBALS['dataPassword'] === "" ){
-			$GLOBALS['passwordErr'] = PASSWARD_ERROR1; 
+			$GLOBALS['passwordErr'] = PASSWORD_ERROR1; 
 			return true;
 		}
 		else if(strlen($GLOBALS['dataPassword'])<8){
-			$GLOBALS['passwordErr'] = PASSWARD_ERROR2;
+			$GLOBALS['passwordErr'] = PASSWORD_ERROR2;
 			return true;
 		}
 		return false;

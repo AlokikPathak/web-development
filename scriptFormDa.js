@@ -376,7 +376,11 @@ function updateRow(indexThis)
 	idSubmit.val("UPDATE");
 	idSubmit.css("background-color","Dodgerblue");
 	key=x[3].innerHTML;
-
+	
+	idCnfPassword.hide();
+	idPassword.hide();
+	idLabelCnfPassword.hide();
+	idLabelPassword.hide();
 	
 }
 
@@ -610,6 +614,10 @@ function resetDetails()
 	idSubmit.css("background-color","#4CAF50");	
 	idHeading.html("Registration Form");
 	
+	idCnfPassword.show();
+	idPassword.show();
+	idLabelCnfPassword.show();
+	idLabelPassword.show();
 	
 	
 }

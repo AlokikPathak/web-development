@@ -16,6 +16,8 @@
 	$dataEmail = $formDataJsonArray['Email'];
 	$dataPassword = $formDataJsonArray['Password'];
 	
+	include_once('constantVariables.php');
+	
 	/**
 	 * Sanitize Email and Password data.
 	 */
@@ -34,10 +36,10 @@
 	{
 		global $dataEmail, $emailError;
 		if( $dataEmail === "" ){
-			$emailError= "Email should be empty";
+			$emailError= EMAIL_ERROR1;
 			return true;
 		}else if( !preg_match("/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/", $dataEmail )){
-			$emailError = "Email is not valid";
+			$emailError = EMAIL_ERROR2;
 			return true;
 		}
 		return false;
@@ -52,11 +54,11 @@
 	{
 		global $dataPassword, $passwordError;
 		if( $dataPassword === "" ){
-			$passwordError = "Password must not be empty"; 
+			$passwordError = PASSWORD_ERROR1; 
 			return true;
 		}
 		else if(strlen($dataPassword)<8){
-			$passwordError ="Password length must be min. 8 chars"; 
+			$passwordError = PASSWORD_ERROR2; 
 			return true;
 		}
 		return false;
@@ -101,9 +103,9 @@
 			$storePassword = $row[7];
 		
 			/** Comparing the client's password with Database password **/
-			$x = strcmp($storePassword, $GLOBALS['dataPassword']);
+			$comparePasswords = strcmp($storePassword, $GLOBALS['dataPassword']);
 			
-			if($x!=0){
+			if($comparePasswords!=0){
 				$myObj = new StdClass;
 				$myObj->code = 404;
 				$myObj->result = "FAILURE";
