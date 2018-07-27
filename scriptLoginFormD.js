@@ -117,9 +117,10 @@ $(function(){
 		$.ajax({
 		
 			type: "POST",
-			url: "authLoginFormA.php",
+			url: "authLoginFormDOOPs.php",
 			data: 'data='+formDataObjJSON,
 			success: function(data){
+				//alert("Server Response: "+data);
 				var responseObj = JSON.parse(data);
 			    var  responseCode = responseObj.code;
 				showServerResponse(responseCode, responseObj.firstName, responseObj.lastName);

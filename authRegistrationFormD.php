@@ -6,8 +6,7 @@
 	 * @author  : Alokik Pathak
 	 * Created date : 20/07/2018
 	 */
-	arjun@gmail.com
-	
+	 
 	/** Declare and initialize variables used in the program **/
 	$firstNameError = $lastNameError = $emailError = $mobileError = $addressError 
 	=$departmentError = $passwordError="";
@@ -59,7 +58,6 @@
    /**
 	* Sanitize all user's credentials.
 	*  
-	* @return boolean if valid returns false else true
 	*/
 	function sanitizeCredentials(){
 		global $dataFirstName, $dataLastName, $dataEmail, $dataMobile,
@@ -352,5 +350,6 @@
 			echo $responseServerJSON;
 		}
 	}
+	echo "FAILURE";
 	    
 ?>

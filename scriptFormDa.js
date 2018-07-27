@@ -594,8 +594,6 @@ function resetDetails()
 {
 	update = false;
 	
-	
-	
 	idFirstName.val("");
 	idLastName.val("");
 	idEmail.val("");
@@ -646,10 +644,11 @@ function runPHPScript(operationCode, firstName, lastName, email, mobile, address
 	$.ajax
 	({
 		type: "POST",
-		url: "authRegistrationFormD.php",
+		url: "authRegistrationFormDOOPs.php",
 		data: 'data='+formDataJSON,
 		success: function(data)
 		{
+			//alert("Server Response: "+data);
 			responseObj = JSON.parse(data);
 			responseCode = responseObj.code;
 		}
