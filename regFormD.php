@@ -100,6 +100,12 @@
 			</div>	
 		</div>
 		
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10" >
+				<p><a href="loginFormE.php">Sign In</a> here!</p>
+			</div>
+		</div>
+		
 	</form>
 
 	

@@ -8,10 +8,10 @@
  */
 
  /**
- * Validates and perform SQL operation using user credentials with the database
- *
- * @author Alokik Pathak
- */
+  * Validates and perform SQL operation using user credentials with the database
+  *
+  * @author Alokik Pathak
+  */
 class RegisterUserData
 {
 	private $operationCode;

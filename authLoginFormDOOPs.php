@@ -172,6 +172,7 @@ class AuthenticateUserData
 		$responseObj->error = $this->error;
 		$responseObj->firstName = $this->firstName ;
 		$responseObj->lastName = $this->lastName;
+		$responseObj->email = $this->email;
 		$responseObj->mobile = $this->mobile;
 		$responseObj->address = $this->address;
 		$responseObj->department = $this->department;
