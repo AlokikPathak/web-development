@@ -1,4 +1,3 @@
-
 /**
  * Filename  - scriptFormDa.php
  * File path - C:\xampp\htdocs\Project\Repository\
@@ -8,7 +7,6 @@
  */
 
 
-
 /**
  * Alternate of $(document).ready(function(){});
  * Executed after all DOM elements are loaded and Document is ready
@@ -16,14 +14,14 @@
 $(function(){
 	
 	/**
-	 * errorFirstName, errorLastName, errorEmail, errorMobile, errorAddress 
-	   are the flags which are set as true when there is error in their respective input.
+	 * "errorFirstName", "errorLastName", "errorEmail", "errorMobile", "errorAddress" 
+	 *     are the flags which are set as true when there is error in their respective input.
 	 * "rowUpdateNo" : stores the value of row which will be updated.
-	 * "update" : is used as flag. It is set as true when user request to update 
-	   a record.
+	 * "update" : used as flag. It is set as true when user request to update 
+	 *            a record.
 	 * "counter" : stores the index of row in which the new user details will be added 
-	   to table.
-	 * "responseCode" : stores the Server response code.
+	 *             to table.
+	 * "responseCode" : stores the SQL operation Server response code.
 	 * "key" : stores the unique email of the user for delete and update operation.
 	 */
 	var errorFirstName = true;
@@ -42,9 +40,8 @@ $(function(){
 
 	/**
 	 * Assigning ids of form Elements to variable which are accessed many time of 
-	   Code optimization
+	 * Code optimization
 	 */
-
 	var idFirstName = $("#fname");
 	var idLastName = $("#lname");
 	var idEmail = $("#email");
@@ -67,7 +64,6 @@ $(function(){
 	var idPasswordError = $("#password_error_message");
 	var idCnfPasswordError = $("#cnfpassword_error_message");
 
-	
 	hideErrorMessage();
 	
 	$("input[type=text], input[type=password]").focus(function(){
@@ -86,29 +82,29 @@ $(function(){
 		$(this).css("background-color","#ffffcc")
 	});
 	
-	$("#fname").keyup(function(){
+	idFirstName.keyup(function(){
 		checkFirstName();
 	});
 
 	
-	$("#lname").keyup(function(){
+	idLastName.keyup(function(){
 		checkLastName();
 	});
 	
 	
-	$("#email").keyup(function(){
+	idEmail.keyup(function(){
 		checkEmail();
 	});
 	
-	$("#mobile").keyup(function(){
+	idMobile.keyup(function(){
 		checkMobile();
 	});
 	
-	$('#password').keyup(function(){
+	idPassword.keyup(function(){
 		checkPassword();
 	});
 	
-	$('#cnfpassword').keyup(function(){
+	idCnfPassword.keyup(function(){
 		checkCnfPassword();
 	});
 	
@@ -116,7 +112,7 @@ $(function(){
 		resetDetails();
 	});
 	
-	$("#subUpd").click(function(){
+	idSubmit.click(function(){
 		myFunction();
 	});
 	
@@ -128,7 +124,7 @@ $(function(){
 	function checkFirstName() {
 		
 		var pattern = /^[a-zA-Z]*$/;
-		var fname = $("#fname").val();
+		var fname = idFirstName.val();
 		if (pattern.test(fname) && fname !== '') {
 			idFirstNameError.hide();
 			errorFirstName = false; 
@@ -151,7 +147,7 @@ $(function(){
 	function checkLastName() {
 		
 		var pattern = /^[a-zA-Z]*$/;
-		var lname = $("#lname").val();
+		var lname = idLastName.val();
 		
 		if(lname == ""){
 			idLastNameError.hide();
@@ -181,7 +177,7 @@ $(function(){
 	function checkEmail() {
 		
 		var pattern = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-		var email = $("#email").val();
+		var email = idEmail.val();
 		if(pattern.test(email) && email !== '') {
 			
 			var emailDuplicate = checkDuplicateEmail(email);
@@ -215,8 +211,10 @@ $(function(){
    	 * Set errorMobile value as false for valid data else true.
 	 */
 	function checkMobile(){
-		var mob = $("#mobile").val();
+		
+		var mob = idMobile.val();
 		var pattern = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+		
 		if( pattern.test(mob) ){ 
 			var mobileDuplicate = checkDuplicateMobile(mob);
 			
@@ -224,17 +222,15 @@ $(function(){
 				idMobileError.hide();
 				errorMobile = false;
 				idMobile.css("color","Dodgerblue");
-			}
-			else{
-				
+			
+			}else{	
 				idMobileError.html("Mob. No. already exist! Try something else");
 				idMobileError.show();
 				errorMobile = true;
 				idMobile.css("color","tomato");
-				
 			}
-		}
-		else{
+		
+		}else{
 			idMobileError.html("Mobile must contain 10 digit numeric value");
 			idMobileError.show();
 			errorMobile = true;
@@ -334,8 +330,8 @@ $(function(){
 		hashKeyPswrd = hashKeyPswrd.toString();
 		var statusFinal = validateFormJQuery();
 
-		if( statusFinal )
-		{
+		if( statusFinal ){
+			
 			if( update ){
 				update=false;
 				updateTable(rowUpdateNo, firstName, lastName, email, mobile, address, department, hashKeyPswrd);
@@ -345,7 +341,7 @@ $(function(){
 				resetDetails();
 			}
 		}else{
-			alert("Please fill the form correctly..!")
+			alert("Please fill the form correctly..!");
 		}	
 		
 	}
@@ -366,7 +362,6 @@ $(function(){
 	function autoFill( rowNo, firstName, lastName, email, mobile, address, department, pswrd ) {
 		event.preventDefault();
 		
-		
 		idFirstName.val(firstName);
 		idLastName.val(lastName);
 		idEmail.val(email);
@@ -382,7 +377,7 @@ $(function(){
 
 	/**
 	 * Sends the validated user data to server to store in database and if stores successfully
-	   update the Employee details table in the registration form.
+	 * update the Employee details table in the registration form.
 	 * 
 	 * @param integer rowNo stores the row no. of selected record in table
 	 * @param string firstName stores the First Name data
@@ -422,11 +417,10 @@ $(function(){
 	/**
 	 * updateRow() method is invoked when user clicks on the Update button 
 	 * @param reference indexThis stores the reference to index in table
-	   selected for update the record 
+	 *        selected for update the record 
 	 */
 	function updateRow(indexThis)
 	{	
-		
 		update = true;	
 		var rowNo = indexThis.parentNode.parentNode.rowIndex ;
 		
@@ -442,8 +436,7 @@ $(function(){
 			x[6].innerHTML, 
 			""
 		);
-		
-		
+			
 		errorFirstName = errorEmail = errorMobile= errorCnfPassword = false;
 		errorLastName = errorAddress = errorPassword = false;
 		
@@ -468,7 +461,7 @@ $(function(){
 	 */
 	function checkDuplicateEmail( emailInput)
 	{
-		if(update == false){
+		if(!update){
 			for(var i=1; i<counter; i++){
 				var x = document.getElementById("empTab").rows[i].cells;
 
@@ -499,7 +492,7 @@ $(function(){
 	 */
 	function checkDuplicateMobile( mobileInput )
 	{	
-		if(update == false ){
+		if(!update){
 			for(var i=1; i<counter; i++){
 				var x = document.getElementById("empTab").rows[i].cells;
 
@@ -541,19 +534,15 @@ $(function(){
 		var rowNum = index.parentNode.parentNode.rowIndex ;
 		var x = document.getElementById("empTab").rows[rowNum].cells;
 		key = x[3].innerHTML;
-		
-		
+				
 		event.preventDefault();
 		runPHPScript(3,'','','','','','','');
 			
 		if(responseCode == 200){
-			
-			resetDetails();
-			
+			resetDetails();	
 			alert("Do you want to delete row: "+ rowNum);	
 			document.getElementById("empTab").deleteRow( rowNum );
 			counter--;
-			
 			updateAfterdel( rowNum);
 			alert("Row: "+ rowNum +" deleted..!");
 			resetDetails();
@@ -577,12 +566,10 @@ $(function(){
 	 */
 	function addToTable(firstName, lastName, email, mobile, address, department, pswrd)
 	{
-
 		
 		/** Invoke the Function to store the details in MySQL database **/
 		runPHPScript(1, firstName, lastName, email, mobile, address, department, pswrd);
 
-	  
 		if( responseCode == 200 ){
 		  
 			var table = document.getElementById("empTab");
@@ -647,7 +634,7 @@ $(function(){
 	/**
 	 * Validates the all user's data.
 	 * 
-	 * @return boolean false if data is valid else true.
+	 * @return boolean false if data is invalid else true.
 	 */
 	function validateFormJQuery()
 	{
@@ -658,8 +645,6 @@ $(function(){
 		}
 		return true;
 	}
-
-
 
 	/**
 	 * Performs the SQL operations on server MYsql database.
@@ -672,8 +657,7 @@ $(function(){
 	 * @param string address stores the Address data
 	 * @param string department stores the Department data
 	 * @param string pswrd stores the Password data
-	*/
-
+   	 */
 	function runPHPScript(operationCode, firstName, lastName, email, mobile, address, department, pswrd)
 	{
 		var formDataObj= {'operation':operationCode, 'keyValue':key,
@@ -689,14 +673,12 @@ $(function(){
 			data: 'data='+formDataJSON,
 			success: function(data)
 			{
-				//alert("Server Response: "+data);
 				responseObj = JSON.parse(data);
 				responseCode = responseObj.code;
 			}
 		});
 			
-	}
-		
+	}	
 		
 
 });

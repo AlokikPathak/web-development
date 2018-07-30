@@ -1,4 +1,3 @@
-
 /**
  * Filename  - scriptFormE.php
  * File path - C:\xampp\htdocs\Project\Repository\
@@ -81,12 +80,12 @@ $(function(){
 	});
 	
 	/** Assign validateEmail() method to email input field for keyup event **/
-	$("#email").keyup(function(){
+	idEmail.keyup(function(){
 		validateEmail();
 	});
 	
 	/** Assign validatePassword() to password input field for keyup event **/
-	$("#password").keyup(function(){
+	idPassword.keyup(function(){
 		validatePassword();
 	});
 	
@@ -109,9 +108,7 @@ $(function(){
 	idMobile.keyup(function(){
 		validateMobile();
 	});
-	
-	
-	
+		
 	
 	/**
 	 * Validates Email data and check for duplicates.
@@ -133,13 +130,13 @@ $(function(){
 			idEmailError.show();
 		}
 	}
+
 	
 	/**
 	 * Validates Password field.
    	 * Set errorPassword value as false for valid data else true.
 	 */
-	function validatePassword()
-	{
+	function validatePassword(){
 	
 		if(idPassword.val().length < 8 ){
 			errorPassword = true;
@@ -153,7 +150,7 @@ $(function(){
 	
    /**
 	* Validate First Name field in Registration form,
-	  Sets the errorFirstName as false if valid else true.
+	* Sets the errorFirstName as false if valid else true.
 	*
 	*/
 	function validateFirstName() {
@@ -174,9 +171,10 @@ $(function(){
 		}
 	}
 	
+	
    /**
 	* Validate Last Name field in Registration form,
-	  Sets the errorLastName as false if valid else true.
+	* Sets the errorLastName as false if valid else true.
 	*
 	*/
 	function validateLastName() {
@@ -207,6 +205,7 @@ $(function(){
 	/**
 	 * Validates Mobile data and check for duplicates.
    	 * Set errorMobile value as false for valid data else true.
+	 *
 	 */
 	function validateMobile(){
 		var mob = idMobile.val();
@@ -227,6 +226,7 @@ $(function(){
 	/**
 	 * Validates Email data and check for duplicates.
    	 * Set errorEmail value as false for valid data else true.
+	 *
 	 */
 	function validateEmailUpdate()
 	{
@@ -247,9 +247,9 @@ $(function(){
 	
     /**
 	 * It fetches & validates login and password field data,
-	   then auhthenticate them form the server database
+	 * then auhthenticate them form the server database
 	 */
-	$("#login").click(function(){
+	idSubmit.click(function(){
 	
 		var email = idEmail.val();
 		var pswrd = idPassword.val();
@@ -257,7 +257,7 @@ $(function(){
 		var hashKeyPswrd = CryptoJS.MD5(pswrd);
 		hashKeyPswrd = hashKeyPswrd.toString();
 	
-		if( errorEmail == true || errorPassword == true){
+		if( errorEmail || errorPassword ){
 			alert("Please fill the form correctly first!");
 		}else{
 			authenticateUserCredentials(email, hashKeyPswrd);
@@ -271,9 +271,8 @@ $(function(){
 	* @param string email contains the email data of user
 	* @parem string pswrd contains the pswrd data of user
     */
-	function authenticateUserCredentials(email, pswrd)
-	{
-	
+	function authenticateUserCredentials(email, pswrd){
+		
 		var formDataObj = {'Email':email, 'Password':pswrd};
 		var formDataObjJSON = JSON.stringify(formDataObj);
 	
@@ -284,7 +283,7 @@ $(function(){
 			url: "authLoginFormDOOPs.php",
 			data: 'data='+formDataObjJSON,
 			success: function(data){
-				//alert("Server Response: "+data);
+				
 				var responseObj = JSON.parse(data);
 			    var  responseCode = responseObj.code;
 				showServerResponse(responseCode, responseObj.firstName, responseObj.lastName,
@@ -348,7 +347,6 @@ $(function(){
 	 *	
      */
 	function updateRecord(firstName, lastName, email, mobile, address, department){
-		
 		
 		idUpdateForm.show();
 		

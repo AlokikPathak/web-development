@@ -50,6 +50,8 @@ class AuthenticateUserData
 	
 	/**
 	 * Validates Email of the user
+	 * 
+	 * @return boolean true if email is invalid else returns false
 	 */
 	public function validateEmail()
 	{
@@ -66,6 +68,8 @@ class AuthenticateUserData
 	
 	/**
 	 * Validates password of the user
+	 *
+	 * @return boolean true if email is invalid else returns false
 	 */
 	public function validatePassword()
 	{

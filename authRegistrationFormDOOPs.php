@@ -325,11 +325,10 @@ class RegisterUserData
 		/** Preventing MYsqli injection **/
 		$stmt = $mysqli->prepare("update employeetable set firstname=?,
 			lastname=?, Email=?, mobile=?,
-			address=?, department=?, 
-			password=? where Email =? ");
-		$stmt->bind_param("ssssssss",$this->firstName, $this->lastName,
+			address=?, department=? where Email =? ");
+		$stmt->bind_param("sssssss",$this->firstName, $this->lastName,
 		$this->email, $this->mobile, $this->address, $this->department,
-		$this->password, $this->keyId);
+		$this->keyId);
 		
 		if($stmt->execute()){
 			$this->responseCode = 200;
