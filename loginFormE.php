@@ -19,7 +19,7 @@
 </head>
 <body>
 
-	<div class="container" >
+<div class="container" >
 	
 	<form class="form-horizontal" style="margin-right:auto; margin-left:auto; text-align:center" id="loginForm">
 		
@@ -45,7 +45,7 @@
 		
 		<div class="form-group">        
 			<div class="col-sm-2 col-sm-offset-5">
-				<input type="button" class="btn btn-success" id="login" onclick="myFunctionLogin()" value="Login">
+				<input type="button" class="btn btn-success" id="login"  value="Login">
 			</div><br>	
 		</div>
 		
@@ -63,7 +63,7 @@
 		
 	</form>
 	
-	</div>
+</div>
 	
 <div class="container"  >
 	
@@ -126,11 +126,35 @@
 		
 		<div class="form-group">        
 			<div class="col-sm-offset-2 col-sm-10 text-left">
-				<input type="button" class="btn btn-success" id="subUpd" onclick="updateData()" value="UPDATE">
+				<input type="button" class="btn btn-success" id="updateButton" value="UPDATE">
 			</div>	
 		</div>
 		
 	</form>
+	
+<div>
+
+<div class="container"  >
+	
+	<form class="form-horizontal" id="afterUpdateForm" style="text-align:center" >
+		<h2 class="" id="HeadingB" style="text-align:center" > Welcome </h2>
+		
+		<div class="form-group">
+			<div class="col-sm-offset-1 col-sm-10" >
+				<p><a href="loginFormE.php">Sign In</a> here! with another account.</p>
+			</div>	
+		</div>
+		
+		<div class="form-group">        
+			<div class="col-sm-2 col-sm-offset-5">
+				<input type="button" class="btn btn-success" id="updateDetailsAgain"  value="Update your details">
+			</div><br>	
+		</div>
+		
+	</form>
+	
+</div>
+
 	
 		
 </body>

@@ -7,41 +7,7 @@
  * Created date : 18/07/2018
  */
 
-/** Error flag for Email and Password Fields **/
-var errorEmail =true;
-var errorPassword = true;
-var errorFirstName = true;
-var errorLastName = true;
-var errorMobile = true;
-var errorEmailUpdate = true;
 
-/** Storing id's of various form element **/
-var idEmail = $("#email");
-var idPassword= $("#password");
-var idSubmit = $("#login");
-var idEmailError = $("#email_error_message");
-var idPasswordError = $("#password_error_message");
-
-var idFirstNameError = $("#fname_error_message");
-var idLastNameError = $("#lname_error_message");
-var idMobileError = $("#mobile_error_message");
-var idAddressError = $("#address_error_message");
-var idUpdateEmailError = $("#update_email_error_message");
-
-var idResponse = $("#responseHead");
-var idHeadingUpdate = $("#HeadingA");
-
-var idUpdateForm = $("#updateRecord");
-var idLoginForm = $("#loginForm");
-var key="";
-var pswrdUpdate="";
-
-var idFirstName = $("#fname");
-var idLastName = $("#lname");
-var idEmailUpdate = $("#emailUpdate");
-var idMobile = $("#mobile");
-var idAddress = $("#address");
-var idDepartment = $("#department");
 
 /**
  * Alternate of $(document).ready(function(){});
@@ -49,11 +15,50 @@ var idDepartment = $("#department");
  */
 $(function(){
 	
+	/** Error flag for Email and Password Fields **/
+	var errorEmail =true;
+	var errorPassword = true;
+	var errorFirstName = true;
+	var errorLastName = true;
+	var errorMobile = true;
+	var errorEmailUpdate = true;
+
+	/** Storing id's of various form element **/
+	var idEmail = $("#email");
+	var idPassword= $("#password");
+	var idSubmit = $("#login");
+	var idEmailError = $("#email_error_message");
+	var idPasswordError = $("#password_error_message");
+
+	var idFirstNameError = $("#fname_error_message");
+	var idLastNameError = $("#lname_error_message");
+	var idMobileError = $("#mobile_error_message");
+	var idAddressError = $("#address_error_message");
+	var idUpdateEmailError = $("#update_email_error_message");
+
+	var idResponse = $("#responseHead");
+	var idHeadingUpdate = $("#HeadingA");
+	var idHeadingAfterUpdate = $("#HeadingB");
+
+	var idUpdateForm = $("#updateRecord");
+	var idLoginForm = $("#loginForm");
+	var idAfterUpdateForm = $("#afterUpdateForm");
+	var key="";
+	var pswrdUpdate="";
+
+	var idFirstName = $("#fname");
+	var idLastName = $("#lname");
+	var idEmailUpdate = $("#emailUpdate");
+	var idMobile = $("#mobile");
+	var idAddress = $("#address");
+	var idDepartment = $("#department");
+	
 	/** Hides the Error Messages when the form is ready **/
 	idEmailError.hide();
 	idPasswordError.hide();
 	
 	idUpdateForm.hide();
+	idAfterUpdateForm.hide();
 	
 	/** Changes background-color ro yellow of input field when it is in focus **/
 	$("input[type=text], input[type=password]").focus(function(){
@@ -106,6 +111,8 @@ $(function(){
 	});
 	
 	
+	
+	
 	/**
 	 * Validates Email data and check for duplicates.
    	 * Set errorEmail value as false for valid data else true.
@@ -144,7 +151,7 @@ $(function(){
 		}
 	}
 	
-	/**
+   /**
 	* Validate First Name field in Registration form,
 	  Sets the errorFirstName as false if valid else true.
 	*
@@ -238,22 +245,26 @@ $(function(){
 		}
 	}
 	
-	
-	
-});
-
-	/**
-	 * Validates Email data and check for duplicates.
-   	 * @return boolean true when any data is invalid else false
+    /**
+	 * It fetches & validates login and password field data,
+	   then auhthenticate them form the server database
 	 */
-	function validateUpdateUser(){
-		
-		if(errorFirstName || errorLastName || errorEmailUpdate || errorMobile ){
-			return true;
+	$("#login").click(function(){
+	
+		var email = idEmail.val();
+		var pswrd = idPassword.val();
+		pswrdUpdate = pswrd;
+		var hashKeyPswrd = CryptoJS.MD5(pswrd);
+		hashKeyPswrd = hashKeyPswrd.toString();
+	
+		if( errorEmail == true || errorPassword == true){
+			alert("Please fill the form correctly first!");
+		}else{
+			authenticateUserCredentials(email, hashKeyPswrd);
 		}
-		return false;
-	}
-
+	});
+	
+	
    /** 
     * Authenticate the user's login credentials form the server side database 
 	*
@@ -281,8 +292,56 @@ $(function(){
 				
 			}
 		});
-	
 	}
+	
+	/**
+	 * Update the record of Logged in User.
+     *
+	 */
+	$("#updateButton").click(function(){
+		
+		pswrdEncrypted = CryptoJS.MD5(pswrdUpdate);
+		pswrdEncrypted= pswrdEncrypted.toString();
+	
+		var statusValidation = validateUpdateUser();
+		if( !statusValidation){
+			runPHPScript(2, idFirstName.val(), idLastName.val(), idEmailUpdate.val(), idMobile.val(), idAddress.val(), idDepartment.val(), pswrdEncrypted);
+			key = idEmailUpdate.val();
+			
+			idHeadingAfterUpdate.html("Welcome "+idFirstName.val()+" "+idLastName.val());
+			idHeadingUpdate.html("Welcome "+idFirstName.val()+" "+idLastName.val());
+			
+			resetAfterUpdate();
+		}
+		else{
+			alert("Please fill the form correctly !");
+		}
+	});
+	
+	
+	/**
+	 * Update the record of Logged in User.
+     *
+	 */
+	$("#updateDetailsAgain").click(function(){
+		
+		idUpdateForm.show();
+		idAfterUpdateForm.hide();
+		
+	});
+	
+	/**
+	 * Validates Email data and check for duplicates.
+   	 * @return boolean true when any data is invalid else false
+	 */
+	function validateUpdateUser(){
+		
+		if( errorFirstName || errorLastName || errorEmailUpdate || errorMobile ){
+			return true;
+		}
+		return false;
+	}
+
 	
 	/**
 	 * Displays the Update data Form to Logged In user
@@ -304,19 +363,21 @@ $(function(){
 		idLoginForm.hide();
 		
 		errorFirstName = errorLastName = errorEmailUpdate = errorMobile = false;
-		
-		
+			
 	}
+	
 	
 	/**
 	 * Show the server response of authentication details
 	 *	
      */
 	function showServerResponse(responseCode, firstName, lastName, email, mobile, address, department){
+		
 		if(responseCode == 200){
 			idResponse.html("Welcome "+firstName+" "+lastName+" !");
 			idHeadingUpdate.html("Welcome "+firstName+" "+lastName+"  !");
 			idResponse.css("color","Dodgerblue");
+			idHeadingUpdate.css("color","Dodgerblue");
 			idEmail.val("");
 			idPassword.val("");
 			updateRecord( firstName, lastName, email, mobile, address, department );
@@ -325,86 +386,62 @@ $(function(){
 			idResponse.css("color","red");
 		}
 	}
+	
+	
+   /**
+	* Performs the SQL operations on server MYsql database.
+	* 
+	* @param integer operationCode stores the value of different operations
+	* @param string firstName stores the First Name data
+	* @param string lastName stores the Last Name data
+	* @param string email stores the Email data
+	* @param string mobile stores the Last Name data
+	* @param string address stores the Address data
+	* @param string department stores the Department data
+	* @param string pswrd stores the Password data
+	*/
+	function runPHPScript(operationCode, firstName, lastName, email, mobile, address, department, pswrd){
+		
+		var formDataObj= {'operation':operationCode, 'keyValue':key,
+		'firstName':firstName, 'lastName':lastName, 'email':email, 'mobile':mobile,
+		'address':address,'department':department, 'password':pswrd};
+		
+		var formDataJSON = JSON.stringify(formDataObj);
+		var responseObj;
+		$.ajax
+		({
+			type: "POST",
+			url: "authRegistrationFormDOOPs.php",
+			data: 'data='+formDataJSON,
+			success: function(data)
+			{
+				//alert("Server Response: "+data);
+				responseObj = JSON.parse(data);
+				var responseCode = responseObj.code;
+			}
+		});
+		
+	}
 
-    /**
-	 * It fetches & validates login and password field data,
-	   then auhthenticate them form the server database
+	
+	/**
+	 * Reset the Login Page 
 	 *	
      */
-	function myFunctionLogin()
-	{
-		var email = idEmail.val();
-		var pswrd = idPassword.val();
-		pswrdUpdate = pswrd;
-		var hashKeyPswrd = CryptoJS.MD5(pswrd);
-		hashKeyPswrd = hashKeyPswrd.toString();
-	
-		if( errorEmail == true || errorPassword == true){
-			alert("Please fill the form correctly first!");
-		}else{
-			authenticateUserCredentials(email, hashKeyPswrd);
-		}
-	}
-	
-/**
- * Performs the SQL operations on server MYsql database.
- * 
- * @param integer operationCode stores the value of different operations
- * @param string firstName stores the First Name data
- * @param string lastName stores the Last Name data
- * @param string email stores the Email data
- * @param string mobile stores the Last Name data
- * @param string address stores the Address data
- * @param string department stores the Department data
- * @param string pswrd stores the Password data
-*/
-
-function runPHPScript(operationCode, firstName, lastName, email, mobile, address, department, pswrd)
-{
-	var formDataObj= {'operation':operationCode, 'keyValue':key,
-	'firstName':firstName, 'lastName':lastName, 'email':email, 'mobile':mobile,
-	'address':address,'department':department, 'password':pswrd};
+	function resetAfterUpdate(){
 		
-	var formDataJSON = JSON.stringify(formDataObj);
-	var responseObj;
-	$.ajax
-	({
-		type: "POST",
-		url: "authRegistrationFormDOOPs.php",
-		data: 'data='+formDataJSON,
-		success: function(data)
-		{
-			//alert("Server Response: "+data);
-			responseObj = JSON.parse(data);
-			var responseCode = responseObj.code;
-		}
-	});
+		idUpdateForm.hide();
+		idLoginForm.hide();
+		idAfterUpdateForm.show();
 		
-}
-
-function resetForm(){
-	
-	idLoginForm.show();
-	idUpdateForm.hide();
-
-}
-
-/**
- * Update the record of Logged in User;
- */
-function updateData(){
-	pswrdEncrypted = CryptoJS.MD5(pswrdUpdate);
-	pswrdEncrypted= pswrdEncrypted.toString();
-	
-	var statusValidation = validateUpdateUser();
-	if( !statusValidation){
-		runPHPScript(2, idFirstName.val(), idLastName.val(), idEmailUpdate.val(), idMobile.val(), idAddress.val(), idDepartment.val(), pswrdEncrypted);
-		resetForm();
-		key = idEmailUpdate.val();
 	}
-	else{
-		alert("Please fill the form correctly !");
-	}
-}
 
-   
+	
+});
+
+	
+  
+	
+	
+	
+	

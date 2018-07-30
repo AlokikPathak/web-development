@@ -95,8 +95,8 @@
 		
 		<div class="form-group">        
 			<div class="col-sm-offset-2 col-sm-10 text-left">
-				<input type="button" class="btn btn-success" id="subUpd" onclick="myFunction()" value="SUBMIT">
-				<input type="button" class="btn btn-danger" ondblclick="resetDetails()" value="RESET">
+				<input type="button" class="btn btn-success" id="subUpd"  value="SUBMIT">
+				<input type="button" class="btn btn-danger" id="resetRegistration" value="RESET">
 			</div>	
 		</div>
 		
@@ -124,7 +124,6 @@
 				<th>Mobile</th>
 				<th>Address</th>
 				<th>Department</th>
-				<th>Password</th>
 				<th>Update</th>
 				<th>Delete</th>
 			</tr>
