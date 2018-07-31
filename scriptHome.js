@@ -1,5 +1,5 @@
 /**
- * Filename  - scriptFormE.php
+ * Filename  - scriptHome.php
  * File path - C:\xampp\htdocs\Project\Repository\
  * Description : Validates Login credentials and sends it to server
  * @author  : Alokik Pathak
@@ -42,6 +42,7 @@ $(function(){
 	var idUpdateForm = $("#updateRecord");
 	var idLoginForm = $("#loginForm");
 	var idAfterUpdateForm = $("#afterUpdateForm");
+	var idLogoutButton = $("#logoutButton");
 	var key="";
 	var pswrdUpdate="";
 
@@ -52,12 +53,14 @@ $(function(){
 	var idAddress = $("#address");
 	var idDepartment = $("#department");
 	
+	
 	/** Hides the Error Messages when the form is ready **/
 	idEmailError.hide();
 	idPasswordError.hide();
 	
 	idUpdateForm.hide();
 	idAfterUpdateForm.hide();
+	idLogoutButton.hide();
 	
 	/** Changes background-color ro yellow of input field when it is in focus **/
 	$("input[type=text], input[type=password]").focus(function(){
@@ -273,17 +276,18 @@ $(function(){
     */
 	function authenticateUserCredentials(email, pswrd){
 		
-		var formDataObj = {'Email':email, 'Password':pswrd};
+		var token= $("#tokenId").val();
+		var formDataObj = {'token':token, 'Email':email, 'Password':pswrd};
 		var formDataObjJSON = JSON.stringify(formDataObj);
 	
 	
 		$.ajax({
 		
 			type: "POST",
-			url: "authLoginFormDOOPs.php",
+			url: "authenticateHome.php",
 			data: 'data='+formDataObjJSON,
 			success: function(data){
-				
+				alert("Server Response Login: "+data);
 				var responseObj = JSON.parse(data);
 			    var  responseCode = responseObj.code;
 				showServerResponse(responseCode, responseObj.firstName, responseObj.lastName,
@@ -378,7 +382,10 @@ $(function(){
 			idHeadingUpdate.css("color","Dodgerblue");
 			idEmail.val("");
 			idPassword.val("");
+			idLogoutButton.show();
+			
 			updateRecord( firstName, lastName, email, mobile, address, department );
+			
 		}else{
 			idResponse.html("Invalid credentials...!");
 			idResponse.css("color","red");
@@ -400,20 +407,22 @@ $(function(){
 	*/
 	function runPHPScript(operationCode, firstName, lastName, email, mobile, address, department, pswrd){
 		
-		var formDataObj= {'operation':operationCode, 'keyValue':key,
+		var token= $("#tokenId").val();
+		var formDataObj= {'token':token, 'operation':operationCode, 'keyValue':key,
 		'firstName':firstName, 'lastName':lastName, 'email':email, 'mobile':mobile,
 		'address':address,'department':department, 'password':pswrd};
 		
 		var formDataJSON = JSON.stringify(formDataObj);
 		var responseObj;
+		
 		$.ajax
 		({
 			type: "POST",
-			url: "authRegistrationFormDOOPs.php",
+			url: "authenticateRegister.php",
 			data: 'data='+formDataJSON,
 			success: function(data)
 			{
-				//alert("Server Response: "+data);
+				alert("Server Response Reg : "+data);
 				responseObj = JSON.parse(data);
 				var responseCode = responseObj.code;
 			}

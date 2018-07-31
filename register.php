@@ -1,17 +1,24 @@
-<!DOCTYPE html>
-
 <!--
 /**
- * Filename  - regFormD.php
+ * Filename  - register.php
  * File path - C:\xampp\htdocs\Project\Repository\
  * Description : It is a User Registration Form page.
  * @author  : Alokik Pathak
  * Created date : 13/07/2018
  */
 -->
+<?php
+
+/** Starts a session **/
+session_start();
+
+?>
+
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
+
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,11 +27,21 @@
   
 </head>
 <body >
+	
+	<?php
+	
+	/** Setting Session token for CSRF Prevention **/
+	$_SESSION['token'] = hash('sha256', random_bytes(32));
+	
+	?>
 
 	<div class="container"  >
 	<h2 class="col-sm-offset-2 col-sm-10" id="Heading" > Registration Form </h2>
 	
 	<form class="form-horizontal">
+		
+		<input type="hidden" name="tokenId" id="tokenId" value="<?php echo $_SESSION['token'];?>">
+		
 		<div class="form-group">
 			<label class="control-label col-sm-2" for="fname">First Name<span style="color: red"> * </span></label>
 			<div class="col-sm-6">
@@ -102,13 +119,12 @@
 		
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10" >
-				<p><a href="loginFormE.php">Sign In</a> here!</p>
+				<p><a href="home.php">Sign In</a> here!</p>
 			</div>
 		</div>
 		
 	</form>
 
-	
 	<div class="form-group">
 		<label class="control-label col-sm-2" for="Employee">Employee Details: </label><br>
 	</div>
@@ -131,19 +147,13 @@
 		
 		</table>
 	</div>
-	
-	
-	
 		
-
-	
-	
 </body>
 
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
- <script src="scriptFormDa.js"></script>
+ <script src="scriptRegister.js"></script>
  <script src="md5.js"></script>
  
 

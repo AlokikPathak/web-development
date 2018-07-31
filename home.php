@@ -1,14 +1,21 @@
-<!DOCTYPE html>
-
 <!--
 /**
- * Filename  - loginFormE.php
+ * Filename  - home.php
  * File path - C:\xampp\htdocs\Project\Repository\
  * Description : It is a User Login Form page.
  * @author  : Alokik Pathak
  * Created date : 20/07/2018
  */
 -->
+
+<?php
+
+/** Starts a session **/
+session_start();
+
+?>
+
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -19,12 +26,20 @@
 </head>
 <body>
 
+<?php
+	/** Setting Session token form CSRF Prevention **/
+	$_SESSION['token'] = hash('sha256', random_bytes(32));
+?>
+
 <div class="container" >
 	
 	<form class="form-horizontal" style="margin-right:auto; margin-left:auto; text-align:center" id="loginForm">
 		
 		<h2 class="col-sm-offset-1 col-sm-10" id="loginHeading">Login Form</h2>
 		<h5 class="col-sm-offset-1 col-sm-10" id="responseHead"></h5>
+		
+		<input type="hidden" name="tokenId" id="tokenId" value="<?php echo $_SESSION['token'];?>">
+		
 		<div class="input-group col-sm-offset-4 col-sm-4 " style="text-align:center">
 		  <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
 		  <input id="email" type="text" class="form-control" name="email" placeholder="Enter your registered email">
@@ -51,7 +66,7 @@
 		
 		<div class="form-group">
 			<div class="col-sm-offset-1 col-sm-10" >
-				<p><a href="regFormD.php">Sign Up</a> here!</p>
+				<p><a href="register.php">Sign Up</a> here!</p>
 			</div>
 		</div>
 		
@@ -64,13 +79,26 @@
 	</form>
 	
 </div>
+
+
+<div class="container">
+
+	<form class="form-horizontal" id="logoutForm">
+	
+		<div class="form-group">
+			<div class="pull-right">
+				<input type="button" id="logoutButton" class="btn btn-success" onclick="location.href='home.php'" value="Logout" style="background-color:red">
+			</div>
+		</div>
+	
+	</form>
 	
 <div class="container"  >
 	
 	<form class="form-horizontal" id="updateRecord" >
 	
-			<h2 class="" id="HeadingA" style="text-align:center" > Welcome </h2>
-			<h3 class="" id="Heading" style="text-align:center" > Update your credentials! </h3>
+		<h2 class="" id="HeadingA" style="text-align:center" > Welcome </h2>
+		<h3 class="" id="Heading" style="text-align:center" > Update your credentials! </h3>
 			
 		<div class="form-group">
 			<label class="control-label col-sm-2" for="fname">First Name<span style="color: red"> * </span></label>
@@ -118,8 +146,7 @@
 			  <select class="form-control " id="department">
 				<option>Software Engineer</option>
 				<option>Software Test Engineer</option>
-				<option>UX/UI Engineer</option>
-			
+				<option>UX/UI Engineer</option>	
 			  </select>
 			</div>
 		</div>
@@ -138,13 +165,7 @@
 	
 	<form class="form-horizontal" id="afterUpdateForm" style="text-align:center" >
 		<h2 class="" id="HeadingB" style="text-align:center" > Welcome </h2>
-		
-		<div class="form-group">
-			<div class="col-sm-offset-1 col-sm-10" >
-				<p><a href="loginFormE.php">Sign In</a> here! with another account.</p>
-			</div>	
-		</div>
-		
+	
 		<div class="form-group">        
 			<div class="col-sm-2 col-sm-offset-5">
 				<input type="button" class="btn btn-success" id="updateDetailsAgain"  value="Update your details">
@@ -155,15 +176,13 @@
 	
 </div>
 
-	
-		
+			
 </body>
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
- <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
- <script src="scriptLoginFormE.js"></script> 
- <script src="md5.js"></script>
-
  
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<script src="scriptHome.js"></script> 
+	<script src="md5.js"></script>
 
 </html>

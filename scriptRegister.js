@@ -1,5 +1,5 @@
 /**
- * Filename  - scriptFormDa.php
+ * Filename  - scriptRegister.php
  * File path - C:\xampp\htdocs\Project\Repository\
  * Description : Validates registration credentials and sends it to server
  * @author  : Alokik Pathak
@@ -118,7 +118,7 @@ $(function(){
 	
    /**
 	* Validate First Name field in Registration form,
-	  Sets the errorFirstName as false if valid else true.
+	* Sets the errorFirstName as false if valid else true.
 	*
 	*/
 	function checkFirstName() {
@@ -660,19 +660,23 @@ $(function(){
    	 */
 	function runPHPScript(operationCode, firstName, lastName, email, mobile, address, department, pswrd)
 	{
-		var formDataObj= {'operation':operationCode, 'keyValue':key,
+		
+		var token= $("#tokenId").val();
+		var formDataObj= {'token':token, 'operation':operationCode, 'keyValue':key,
 		'firstName':firstName, 'lastName':lastName, 'email':email, 'mobile':mobile,
 		'address':address,'department':department, 'password':pswrd};
 			
 		var formDataJSON = JSON.stringify(formDataObj);
 		var responseObj;
+		
 		$.ajax
 		({
 			type: "POST",
-			url: "authRegistrationFormDOOPs.php",
+			url: "authenticateRegister.php",
 			data: 'data='+formDataJSON,
 			success: function(data)
 			{
+				alert("Server Response Registration:  "+data);
 				responseObj = JSON.parse(data);
 				responseCode = responseObj.code;
 			}

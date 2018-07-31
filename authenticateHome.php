@@ -1,12 +1,14 @@
 <?php
 /**
- * File Name : authLoginFormDOOPs.php
+ * File Name : authenticateHome.php
  * File Path : C:\xampp\htdocs\Project\Repository\
  * Description : Validate and authenticate user's credentials using database
  * Created : 26/07/2018
  * @author : Alokik Pathak
  */
  
+/** Starts a session **/
+session_start();
 
 /**
  * Stores, validates and authenticate user credentials with the database
@@ -182,12 +184,43 @@ class AuthenticateUserData
 		$responseObj->department = $this->department;
 		
 		$responseServerJSON = json_encode($responseObj);
+		
+		header('application/json');
 		echo $responseServerJSON;
 	}
+
 }
+
 
 /** Decoding and storing client data **/
 $formDataJsonArray= json_decode($_POST['data'],true);
+
+/** Preventing CSRF attacks **/
+include_once('constantVariables.php');
+
+$arrayCSRF = array("token"=>$formDataJsonArray['token'],
+			 "host"=>$_SERVER['HTTP_REFERER'],
+			 "sessionToken"=>$_SESSION['token'],
+			 "legalHost"=>LEGAL_HOST1
+			 );
+
+			 
+if( strcmp($arrayCSRF['token'],$arrayCSRF['sessionToken']) != 0 || strcmp($arrayCSRF['host'],$arrayCSRF['legalHost']) != 0){
+	
+	/** Found UNAUTHORISED **/
+	$responseObj = new StdClass;
+	$responseObj->code = 403;
+	$responseObj->result = RESULT1;
+	$responseObj->error = CSRF_ERROR;
+	
+	$responseServerJSON = json_encode($responseObj);
+	
+	header('application/json');
+	echo $responseServerJSON;
+	exit;
+}
+
+/** Creating Class instance **/		
 $userLoggedIn = new AuthenticateUserData($formDataJsonArray['Email'],
 				$formDataJsonArray['Password']);
 

@@ -1,11 +1,14 @@
 <?php
 /**
- * File Name : authRegistrationFormDOOPs.php
+ * File Name : authenticateRegister.php
  * File Path : C:\xampp\htdocs\Project\Repository\
  * Description : Validate and register user's data in database
  * Created : 27/07/2018
  * @author : Alokik Pathak
  */
+
+/** Starts a session **/
+session_start();
 
  /**
   * Validates and perform SQL operation using user credentials with the database
@@ -73,6 +76,7 @@ class RegisterUserData
 	public function validateFirstName()
 	{	
 		include_once('constantVariables.php');
+		
 		if( $this->firstName === ""){
 			$this->error = FIRSTNAME_ERROR1; 
 			return true;
@@ -80,6 +84,7 @@ class RegisterUserData
 			$this->error = FIRSTNAME_ERROR2; 
 			return true;
 		}
+		
 		return false;
 	}
 	
@@ -359,8 +364,11 @@ class RegisterUserData
 		$responseObj->address = $this->address;
 		$responseObj->department = $this->department;
 		$responseObj->password = $this->password;
+		$responseObj->sessionToken = $_SESSION['token'];
 		
 		$responseServerJSON = json_encode($responseObj);
+		
+		header('application/json');
 		echo $responseServerJSON;
 	}
 	
@@ -368,16 +376,45 @@ class RegisterUserData
 
 
 /** Parsing client's registration data **/
+include_once('constantVariables.php');
+
 $formDataJsonArray= json_decode($_POST['data'],true);
+
+/** Preventing CSRF attacks **/
+$arrayCSRF = array("token"=>$formDataJsonArray['token'],
+			 "host"=>$_SERVER['HTTP_REFERER'],
+			 "sessionToken"=>$_SESSION['token'],
+			 "legalHostA"=>LEGAL_HOST1,
+			 "legalHostB"=>LEGAL_HOST2
+			 );
+
+$compareToken = strcmp($arrayCSRF['token'],$arrayCSRF['sessionToken']);
+$compareDomain1 = strcmp($arrayCSRF['host'],$arrayCSRF['legalHostA']);
+$compareDomain2 = strcmp($arrayCSRF['host'],$arrayCSRF['legalHostB']);
+ 			 
+if( ($compareDomain1 == 0 || $compareDomain2 == 0) && $compareToken == 0 ){
 	
-$registerUser = new RegisterUserData( $formDataJsonArray['operation'],
+	$registerUser = new RegisterUserData( $formDataJsonArray['operation'],
 				$formDataJsonArray['keyValue'], $formDataJsonArray['firstName'],
 				$formDataJsonArray['lastName'], $formDataJsonArray['email'],
 				$formDataJsonArray['mobile'], $formDataJsonArray['address'],
 				$formDataJsonArray['department'], $formDataJsonArray['password']
 				);
 	
-$registerUser->statusRegistration = $registerUser->authenticateRegisterUser();
-$registerUser->getUserRegistionResponse();
+	$registerUser->statusRegistration = $registerUser->authenticateRegisterUser();
+	$registerUser->getUserRegistionResponse();
+	exit;
+}
+
+/** Found UNAUTHORISED **/
+$responseObj = new StdClass;
+$responseObj->code = 403;
+$responseObj->result = RESULT1;
+$responseObj->error = CSRF_ERROR;
+$responseServerJSON = json_encode($responseObj);
+	
+header('application/json');
+echo $responseServerJSON;
+	
 	
 ?>

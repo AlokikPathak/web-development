@@ -31,6 +31,9 @@ define("DEPARTMENT3", "UX/UI Engineer");
 define("SQL_ERROR1", "Query doesn't gave any result!");
 define("RESULT1","FAILURE");
 define("RESULT2","SUCCESS");
+define("LEGAL_HOST1","http://localhost:8080/Project/Repository/home.php");
+define("LEGAL_HOST2", "http://localhost:8080/Project/Repository/register.php");
+define("CSRF_ERROR","CSRF UNAUTHORISED ACCESS");
 
 
 ?>
